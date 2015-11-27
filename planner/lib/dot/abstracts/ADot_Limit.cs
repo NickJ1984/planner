@@ -4,13 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace planner
+using lib.dot.iFaces;
+
+namespace lib.dot.abstracts
 {
-    public class Class1
+    public abstract class ADot_Limit : ADot_MainValues
     {
         #region Variables
+        internal IDot_Fixer _fixer;
+
         #endregion
         #region Properties
+        #endregion
+        #region Events
         #endregion
         #region Constructors
         #endregion
@@ -18,17 +24,11 @@ namespace planner
         #endregion
         #region Service
         #endregion
-        #region Events
-        #endregion
-        #region Handlers
+        #region Interface implementation
         #endregion
         #region Overrides
         #endregion
         #region internal entities
-        #endregion
-        #region referred interface implementation
-        #endregion
-        #region self interface implementation
         #endregion
     }
 }

@@ -20,5 +20,6 @@ namespace lib.dot.iFaces
 
         DateTime getCurrentDate();
         void setCurrentDate(DateTime date);
+
     }
 }

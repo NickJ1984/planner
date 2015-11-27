@@ -64,10 +64,17 @@ namespace lib.dot.classes
         #endregion
 
         #region Constructors
-        public dot_Fixer(ADot_MainValues parent)
+        public dot_Fixer(IDot_mainValues parent)
             : base(parent)
         {
             _aspect = parent.aspect;
+            _status = e_dot_Fixed.Free;
+
+            _current = parentDate;
+            _freeSpace = 0;
+        }
+        public dot_Fixer()
+        {
             _status = e_dot_Fixed.Free;
 
             _current = parentDate;
@@ -104,8 +111,8 @@ namespace lib.dot.classes
             else if (status == e_dot_Fixed.Fixed)
                 _status = _tmpStatus;
         }
-        public void getParent()
-        { }
+        public void setParent(IDot_mainValues parent)
+        { linkParent(parent); }
         #endregion
 
         #region Service

@@ -21,7 +21,6 @@ namespace lib.dot.abstracts
         protected DateTime _source;
         protected DateTime _current;
         protected e_dot_stateValue _stateValue;
-        protected IDot_Fixer _fixer;
         #endregion
         #region Properties
         public e_dot_aspect aspect { get { return _aspect; } }
@@ -51,7 +50,7 @@ namespace lib.dot.abstracts
         #region Events
         internal event d_valueChange<DateTime> ev_currentChanged;
         #endregion
-        #region Methods
+        #region Constructors
         public ADot_MainValues(e_dot_aspect Aspect)
         {
             _aspect = Aspect;
@@ -59,8 +58,15 @@ namespace lib.dot.abstracts
             initDate = new DateTime(1900, 1, 1);
 
             _source = _current = initDate;
+            
+        }
+        public ADot_MainValues()
+        {
+            _aspect = e_dot_aspect.Dot;
+            _stateValue = e_dot_stateValue.Null;
+            initDate = new DateTime(1900, 1, 1);
 
-
+            _source = _current = initDate;
         }
         #endregion
         #region Methods

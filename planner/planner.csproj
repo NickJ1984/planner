@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>72e67e6d-62e4-4216-ba41-18e3d1090651</ProjectGuid>
+    <ProjectGuid>{72E67E6D-62E4-4216-BA41-18E3D1090651}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>planner</RootNamespace>
@@ -30,41 +30,40 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System"/>
-    
-    <Reference Include="System.Core"/>
-    <Reference Include="System.Xml.Linq"/>
-    <Reference Include="System.Data.DataSetExtensions"/>
-    
-    
-    <Reference Include="Microsoft.CSharp"/>
-    
-    <Reference Include="System.Data"/>
-    
-    <Reference Include="System.Net.Http"/>
-    
-    <Reference Include="System.Xml"/>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
-	<Compile Include="lib\dot\abstracts\ABase.cs" />
+    <Compile Include="lib\dot\abstracts\ABase.cs" />
     <Compile Include="lib\dot\abstracts\ADot_Fixer.cs" />
+    <Compile Include="lib\dot\abstracts\ADot_Limit.cs" />
     <Compile Include="lib\dot\abstracts\ADot_MainValues.cs" />
     <Compile Include="lib\dot\abstracts\ADot_Restrictions.cs" />
+    <Compile Include="lib\Link\abstracts\ALnk_Base.cs" />
+    <Compile Include="lib\Link\classes\dot_DateLinker.cs" />
     <Compile Include="lib\period\abstracts\APeriod_Base.cs" />
     <Compile Include="lib\dot\classes\dot_Fixer.cs" />
     <Compile Include="lib\dot\iFaces\IDot_Fixer.cs" />
     <Compile Include="lib\dot\iFaces\IDot_mainValues.cs" />
+    <Compile Include="lib\period\iFaces\IPeriod.cs" />
     <Compile Include="lib\service\classes.cs" />
     <Compile Include="lib\interfaces\service.cs" />
     <Compile Include="lib\delegates\delegates.cs" />
+    <Compile Include="lib\service\staticClass.cs" />
     <Compile Include="lib\types\types.cs" />
     <Compile Include="lib\dot\abstracts\abstractDot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="lib\Link\iFaces\" />
     <Folder Include="lib\period\classes\" />
-    <Folder Include="lib\period\iFaces\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -74,5 +73,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-
- </Project>
+</Project>

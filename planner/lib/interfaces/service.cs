@@ -1,5 +1,6 @@
 ﻿
 using lib.types;
+using lib.service;
 
 namespace lib.interfaces
 {
@@ -9,5 +10,10 @@ namespace lib.interfaces
         int getIndex();
         e_ValueType getType();
         string getID();
+
+    }
+    public interface IEntity
+    {
+        entityInfo getEntityInfo();
     }
 }

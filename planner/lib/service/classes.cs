@@ -26,7 +26,8 @@ namespace lib.service
         public int getIndex() { return index; }
         public e_ValueType getType() { return type; }
         public string getID() { return ID; }
-
+        public entityInfo getEntityInfo()
+        { return new entityInfo() { index = _index, type = this.type, ID = this.ID }; }
         public override int GetHashCode() { return ID.GetHashCode(); }
         public override bool Equals(object obj)
         {
@@ -36,6 +37,12 @@ namespace lib.service
         }
         public override string ToString()
         { return ID; }
+    }
 
+    public struct entityInfo
+    {
+        public int index;
+        public e_ValueType type;
+        public string ID;
     }
 }

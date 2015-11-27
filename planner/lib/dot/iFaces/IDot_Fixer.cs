@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using lib.types;
-using lib.delegates;
+using lib.dot.abstracts;
+using lib.dot.iFaces;
 
 namespace lib.dot.iFaces
 {
@@ -25,5 +22,6 @@ namespace lib.dot.iFaces
         DateTime checkOnCurrentModified(DateTime oldValue, DateTime newValue);
         void changeAspect(e_dot_aspect Aspect);
         void fixManual(bool manualFix);
+        void setParent(IDot_mainValues parent);
     }
 }

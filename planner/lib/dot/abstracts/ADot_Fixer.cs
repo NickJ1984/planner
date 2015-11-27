@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using System.Linq.Expressions;
-
-using lib.interfaces;
-using lib.service;
 using lib.types;
 using lib.delegates;
+using lib.dot.iFaces;
 
 namespace lib.dot.abstracts
 {
@@ -32,11 +26,14 @@ namespace lib.dot.abstracts
         protected d_value<DateTime> setCurrent;
         #endregion
         #region Constructor
-        public ADot_Fixer(ADot_MainValues parent)
+        public ADot_Fixer()
         {
-            getCurrent = parent.getCurrentDate;
-            setCurrent = parent.setCurrentDate;
             initialize_ExpressionTrees();
+        }
+        public ADot_Fixer(IDot_mainValues parent)
+            :this()
+        {
+            linkParent(parent);
         }
         #endregion
         #region methods
@@ -106,6 +103,14 @@ namespace lib.dot.abstracts
 
             inBoundCheck = Expression.Lambda<Func<e_dot_aspect, DateTime, DateTime, DateTime>>(eBlock_bnd, pSide, pBound, pDate).Compile();
             #endregion
+        }
+        #endregion
+        #region service
+        protected void linkParent(IDot_mainValues parent)
+        {
+            if (getCurrent != null || setCurrent != null) return;
+            getCurrent = parent.getCurrentDate;
+            setCurrent = parent.setCurrentDate;
         }
         #endregion
     }
