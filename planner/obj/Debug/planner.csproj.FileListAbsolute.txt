@@ -1,0 +1,5 @@
+C:\Users\NickJ\Documents\Visual Studio 2015\Projects\planner\planner\bin\Debug\planner.dll
+C:\Users\NickJ\Documents\Visual Studio 2015\Projects\planner\planner\bin\Debug\planner.pdb
+C:\Users\NickJ\Documents\Visual Studio 2015\Projects\planner\planner\obj\Debug\planner.csprojResolveAssemblyReference.cache
+C:\Users\NickJ\Documents\Visual Studio 2015\Projects\planner\planner\obj\Debug\planner.dll
+C:\Users\NickJ\Documents\Visual Studio 2015\Projects\planner\planner\obj\Debug\planner.pdb
