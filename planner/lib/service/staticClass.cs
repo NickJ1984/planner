@@ -44,5 +44,13 @@ namespace lib.service
                     throw new Exception("argument link has no value");
             }
         }
+        public static int determineDirection(DateTime source, DateTime current)
+        {
+            if (source == current) return 0;
+            else if (source > current) return -1;
+            else if (source < current) return 1;
+
+            return -2;
+        }
     }
 }

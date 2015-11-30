@@ -13,9 +13,9 @@ namespace lib.period.iFaces
         event EventHandler event_finishChanged;
 
         DateTime getStart();
-        void setStart(DateTime dStart);
+        void setStart(object sender, EventArgs e);
         DateTime getFinish();
-        void setFinish(DateTime dFinish);
+        void setFinish(object sender, EventArgs e);
         double getDuration();
         void setDuration(double dStart);
     }

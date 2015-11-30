@@ -46,6 +46,12 @@
     <Compile Include="lib\dot\abstracts\ADot_Limit.cs" />
     <Compile Include="lib\dot\abstracts\ADot_MainValues.cs" />
     <Compile Include="lib\dot\abstracts\ADot_Restrictions.cs" />
+    <Compile Include="lib\dot\classes\dot_Date_eventArgs.cs" />
+    <Compile Include="lib\dot\classes\dot_Limit.cs" />
+    <Compile Include="lib\dot\classes\dot_Limit_eventArgs.cs" />
+    <Compile Include="lib\dot\classes\dot_Value.cs" />
+    <Compile Include="lib\dot\iFaces\IDot_Limit.cs" />
+    <Compile Include="lib\dot\iFaces\IDot_Value.cs" />
     <Compile Include="lib\Link\abstracts\ALnk_Base.cs" />
     <Compile Include="lib\Link\classes\dot_DateLinker.cs" />
     <Compile Include="lib\period\abstracts\APeriod_Base.cs" />

@@ -12,6 +12,8 @@ namespace planner
         #endregion
         #region Properties
         #endregion
+        #region Delegates
+        #endregion
         #region Constructors
         #endregion
         #region Methods
@@ -21,6 +23,8 @@ namespace planner
         #region Events
         #endregion
         #region Handlers
+        #endregion
+        #region Handlers self
         #endregion
         #region Overrides
         #endregion
