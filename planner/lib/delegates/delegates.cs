@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 namespace lib.delegates
 {
     public delegate void d_value<T>(T Value);
+    public delegate T d_valueGet<T>();
+
     public delegate void d_singleValue<T>(object sender, T Value);
     public delegate void d_valueChange<T>(object sender, T oldValue, T newValue);
 

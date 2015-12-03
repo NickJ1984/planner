@@ -5,11 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 using lib.types;
+using System.Linq.Expressions;
 
 namespace lib.service
 {
     public static class __hlp
     {
+        public static DateTime initDate = new DateTime(1900, 1, 1);
+
         public static e_sideType getSideType(e_linkType type, e_linkObject tObject)
         {
             KeyValuePair<e_sideType, e_sideType> result = decomposeLink(type);
@@ -51,6 +54,12 @@ namespace lib.service
             else if (source < current) return 1;
 
             return -2;
+        }
+
+        public static string getValueName<T>(Expression<Func<T>> memberExpression)
+        {
+            MemberExpression expressionBody = (MemberExpression)memberExpression.Body;
+            return expressionBody.Member.Name;
         }
     }
 }
