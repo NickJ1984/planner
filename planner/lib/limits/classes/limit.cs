@@ -31,6 +31,7 @@ namespace lib.limits.classes
 
         private NewExpression pResult;
         #endregion
+        #region Variables
         internal int direction;
         /*
             0 - точка
@@ -59,7 +60,8 @@ namespace lib.limits.classes
                 }
             }
         }
-
+        #endregion
+        #region Constructors
         public limit(e_dot_Limit2 vLimit, DateTime Date)
         {
             initExpressionValues();
@@ -70,6 +72,8 @@ namespace lib.limits.classes
         public limit()
             :this(e_dot_Limit2.None , __hlp.initDate)
         { }
+        #endregion
+        #region Methods
         public getFunctionLimit getFunctionLim(e_dot_Limit2 Limit)
         {
             int tmp = 0;
@@ -117,6 +121,8 @@ namespace lib.limits.classes
             
             return result;
         }
+        #endregion
+        #region Service
         private void initInternal()
         {
             process = getFunction(_limit, ref direction);
@@ -185,7 +191,8 @@ namespace lib.limits.classes
 
             return Expression.Lambda<Func<DateTime, DateTime, result>>(resBlock, pLimit, pDate).Compile();
         }
-
+        #endregion
+        #region inner Entities
         private class result
         {
             public DateTime date;
@@ -197,7 +204,8 @@ namespace lib.limits.classes
                 this.allow = allow;
             }
         }
+        #endregion`
     }
 
-    
+
 }
