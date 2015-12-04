@@ -58,6 +58,8 @@
     <Compile Include="lib\dot\iFaces\IDot_Value.cs" />
     <Compile Include="lib\graphic\iFaces\IGraphic.cs" />
     <Compile Include="lib\graphic\iFaces\IDay.cs" />
+    <Compile Include="lib\limits\classes\limit.cs" />
+    <Compile Include="lib\limits\iFaces\ILimit.cs" />
     <Compile Include="lib\Link\abstracts\ALnk_Base.cs" />
     <Compile Include="lib\Link\classes\dot_DateLinker.cs" />
     <Compile Include="lib\period\abstracts\APeriod_Base.cs" />

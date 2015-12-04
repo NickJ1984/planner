@@ -48,7 +48,7 @@ namespace lib.types
     public enum e_taskStatus : byte { none = 0, inTime = 1, early = 2, late = 3, delayed = 4 }
     #endregion
     #region Graphic
-    
-    #endregion
 
+    #endregion
+    
 }
