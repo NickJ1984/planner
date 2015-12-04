@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using lib.types;
 using lib.dot.classes;
+using lib.delegates;
 
 namespace lib.dot.iFaces
 {
@@ -22,5 +23,12 @@ namespace lib.dot.iFaces
 
         void reset();
         void reset(DateTime startDate, e_dot_stateValue startState = e_dot_stateValue.Source);
+    }
+    public interface IDot_Value2
+    {
+        bool enabled { get; set; }
+        DateTime date { get; set; }
+
+        event EventHandler<eventArgs_valueChange<DateTime>> event_dateChanged;
     }
 }

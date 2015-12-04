@@ -16,5 +16,7 @@ namespace lib.delegates
 
     public delegate void d_valueChange_eventArgs<T>(object sender, T oldValue, T newValue, bool allowed = false);
 
+    public delegate void d_returnValueChange_eventArgs<T>(object sender, T Value, bool allowed = false);
+
     public delegate bool d_valueComparator<T>(object sender, T oldValue, T newValue, out T result);
 }

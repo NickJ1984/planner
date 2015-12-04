@@ -47,13 +47,17 @@
     <Compile Include="lib\dot\abstracts\ADot_Limit.cs" />
     <Compile Include="lib\dot\abstracts\ADot_MainValues.cs" />
     <Compile Include="lib\dot\abstracts\ADot_Restrictions.cs" />
+    <Compile Include="lib\dot\classes\Dot2.cs" />
     <Compile Include="lib\dot\classes\dot_Date_eventArgs.cs" />
     <Compile Include="lib\dot\classes\dot_Limit.cs" />
     <Compile Include="lib\dot\classes\dot_Move.cs" />
     <Compile Include="lib\dot\classes\dot_Value.cs" />
+    <Compile Include="lib\dot\iFaces\IDot2.cs" />
     <Compile Include="lib\dot\iFaces\IDot_Limit.cs" />
     <Compile Include="lib\dot\iFaces\IDot_Move.cs" />
     <Compile Include="lib\dot\iFaces\IDot_Value.cs" />
+    <Compile Include="lib\graphic\iFaces\IGraphic.cs" />
+    <Compile Include="lib\graphic\iFaces\IDay.cs" />
     <Compile Include="lib\Link\abstracts\ALnk_Base.cs" />
     <Compile Include="lib\Link\classes\dot_DateLinker.cs" />
     <Compile Include="lib\period\abstracts\APeriod_Base.cs" />
@@ -70,8 +74,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="lib\graphic\abstract\" />
+    <Folder Include="lib\graphic\classes\" />
     <Folder Include="lib\Link\iFaces\" />
     <Folder Include="lib\period\classes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="lib\GlobalInfo.txt" />
+    <Content Include="lib\Link\InfoLink.txt" />
+    <Content Include="lib\project\Info.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
