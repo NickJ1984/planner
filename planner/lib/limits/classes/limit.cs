@@ -31,6 +31,13 @@ namespace lib.limits.classes
 
         private NewExpression pResult;
         #endregion
+        internal int direction;
+        /*
+            0 - точка
+            1 - вперед
+            -1 - назад
+            -2 - ограничение отсутствует
+        */
         private DateTime _date;
         private e_dot_Limit2 _limit;
         private Func<DateTime, DateTime, result> process;
@@ -65,7 +72,8 @@ namespace lib.limits.classes
         { }
         public getFunctionLimit getFunctionLim(e_dot_Limit2 Limit)
         {
-            Func<DateTime, DateTime, result> outFnc = getFunction(Limit);
+            int tmp = 0;
+            Func<DateTime, DateTime, result> outFnc = getFunction(Limit, ref tmp);
 
             getFunctionLimit result = (DateTime dLimit, DateTime Date, out DateTime dResult) =>
             {
@@ -86,12 +94,32 @@ namespace lib.limits.classes
 
         public ILimit compare(ILimit outer)
         {
-            throw new NotImplementedException();
+
+            limit result = new limit(_limit, date);
+            return result;
         }
-        
+        public bool isFits(ILimit outer)
+        {
+            ExpressionType eType = ExpressionType.Equal;
+            switch(direction)
+            {
+                case 1:
+                    eType = ExpressionType.GreaterThanOrEqual;
+                    break;
+                case -1:
+                    eType = ExpressionType.LessThanOrEqual;
+                    break;
+                case 0:
+                    break;
+                default:
+                    return false;
+            }
+            
+            return result;
+        }
         private void initInternal()
         {
-            process = getFunction(_limit);
+            process = getFunction(_limit, ref direction);
         }
         private void initExpressionValues()
         {
@@ -113,23 +141,27 @@ namespace lib.limits.classes
             nullProcess = Expression.Lambda<Func<DateTime, DateTime, result>>(nullBlock, pLimit, pDate).Compile();
             #endregion
         }
-        private Func<DateTime, DateTime, result> getFunction(e_dot_Limit2 vLimit)
+        private Func<DateTime, DateTime, result> getFunction(e_dot_Limit2 vLimit, ref int Direction)
         {
             switch (vLimit)
             {
                 case e_dot_Limit2.inDate:
                     etSign = ExpressionType.Equal;
+                    Direction = 0;
                     break;
 
                 case e_dot_Limit2.notEarlier:
                     etSign = ExpressionType.GreaterThanOrEqual;
+                    Direction = 1;
                     break;
 
                 case e_dot_Limit2.notLater:
                     etSign = ExpressionType.LessThanOrEqual;
+                    Direction = -1;
                     break;
 
                 case e_dot_Limit2.None:
+                    Direction = -2; //направление отсутствует
                     return nullProcess;
             }
 

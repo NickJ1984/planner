@@ -16,6 +16,7 @@ namespace lib.limits.iFaces
         bool checkDate(DateTime Date, out DateTime result);
         getFunctionLimit getFunctionLim(e_dot_Limit2 Limit);
         ILimit compare(ILimit outer);
+        bool isFits(ILimit outer);
     }
 
 
