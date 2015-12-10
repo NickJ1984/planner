@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 using lib.types;
-using lib.interfaces;
-using lib.service;
+using lib.interfaces.archive;
+using lib.service.archive;
 using lib.period.iFaces;
 using lib.dot.iFaces;
 
@@ -72,8 +72,8 @@ namespace lib.Link.abstracts
             _parent = precursor;
             _child = follower;
             _type = lType;
-            _sideChild = __hlp.getSideType(lType, e_linkObject.follower);
-            _sideParent = __hlp.getSideType(lType, e_linkObject.precursor);
+            //_sideChild = __hlp.getSideType(lType, e_linkObject.follower);
+            //_sideParent = __hlp.getSideType(lType, e_linkObject.precursor);
             linkDates();
         }
         protected virtual void linkDates()

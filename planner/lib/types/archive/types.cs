@@ -4,16 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace lib.types
+namespace lib.archive.types
 { 
 
     
     public enum e_ValueType { Null = 0, Dot = 1, Period = 2}
     //public enum e_dot_stateMovement { Cant = 0, canMove = 1, canMoveRight = 2, canMoveLeft = 3}
     //помоему Fixed тоже самое описывает
-    #region Entity
-    public enum e_objectType { task = 1, link = 2, group = 3, project = 4, limit_check = 5 }
-    #endregion
+
 
     #region Dot
     public enum e_dot_type { start = 1, finish =2}
@@ -46,24 +44,11 @@ namespace lib.types
     }
     #endregion
     #region Task
-    public enum e_tskLimit
-    {
-        Earlier = 1,
-        startNotEarlier = 2,
-        finishNotEarlier = 3,
-        Later = 4,
-        startNotLater = 5,
-        finishNotLater = 6,
-        startFixed = 7,
-        finishFixed = 8
-    }
+    public enum e_task : byte { none = 0, declared = 1, started = 2, finished = 3 }
+    public enum e_taskStatus : byte { none = 0, inTime = 1, early = 2, late = 3, delayed = 4 }
     #endregion
-    #region Project
-    public enum e_prjType
-    {
-        startDate = 1,
-        finishDate = 4
-    }
+    #region Graphic
+
     #endregion
     
 }

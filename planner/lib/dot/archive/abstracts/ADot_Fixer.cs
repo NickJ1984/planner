@@ -3,9 +3,9 @@
 using System.Linq.Expressions;
 using lib.types;
 using lib.delegates;
-using lib.dot.iFaces;
+using lib.dot.archive.iFaces;
 
-namespace lib.dot.abstracts
+namespace lib.dot.archive.abstracts
 {
     public abstract class ADot_Fixer : ABase
     {

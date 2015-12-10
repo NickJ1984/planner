@@ -1,10 +1,10 @@
 ﻿
-using lib.interfaces;
-using lib.service;
+using lib.interfaces.archive;
+using lib.service.archive;
 using lib.delegates;
 using lib.types;
 
-namespace lib.dot.abstracts
+namespace lib.dot.archive.abstracts
 {
 
     public abstract class ABase : IidentObject

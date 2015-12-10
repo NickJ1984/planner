@@ -5,13 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 
 using lib.types;
+using lib.delegates;
+using lib.limits.iFaces;
 
 namespace lib.dot.iFaces
 {
-    public interface IDot2
+    public interface IDot
     {
         DateTime date { get; set; }
-        IDot_Limit2 dotLimit { get; set; }
-        IDot_Value2 dValue { get; }
+        ILimit_check dotLimitCheck { get; set; }
+        event EventHandler<eventArgs_valueChange<DateTime>> event_dateChanged;
     }
 }

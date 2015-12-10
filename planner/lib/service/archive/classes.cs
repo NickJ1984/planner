@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 using lib.types;
-using lib.interfaces;
+using lib.interfaces.archive;
 
-namespace lib.service
+namespace lib.service.archive
 {
     internal class identify : IidentObject
     {

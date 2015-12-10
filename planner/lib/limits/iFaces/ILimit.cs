@@ -5,19 +5,30 @@ using System.Text;
 using System.Threading.Tasks;
 
 using lib.types;
+using lib.interfaces;
+using lib.limits.delegates;
 using lib.limits.classes;
 
 namespace lib.limits.iFaces
 {
-    public interface ILimit
+    public interface ILimit_check
     {
-        e_dot_Limit2 limitType { get; set; }
+        DateTime checkDate(DateTime Date);
+    }
+    public interface ILimit_values
+    {
+        int direction { get; }
+        e_dot_Limit limitType { get; set; }
         DateTime date { get; set; }
+    }
+    public interface ILimit : ILimit_values,ILimit_check, IComparable, IEquatable<ILimit>
+    {
+        getFunctionLimit getFunctionLim(e_dot_Limit Limit);
+        KeyValuePair<double, double> getFreeSpace(DateTime cDate); //key - leftSpace, value - rightSpace
         bool checkDate(DateTime Date, out DateTime result);
-        getFunctionLimit getFunctionLim(e_dot_Limit2 Limit);
-        ILimit compare(ILimit outer);
-        bool isFits(ILimit outer);
+        bool isAllowed(ILimit limit);
+        bool isAllowed(DateTime date);
     }
 
-
+    
 }

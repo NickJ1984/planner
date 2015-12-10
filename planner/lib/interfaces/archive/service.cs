@@ -1,8 +1,8 @@
 ﻿
 using lib.types;
-using lib.service;
+using lib.service.archive;
 
-namespace lib.interfaces
+namespace lib.interfaces.archive
 {
     public interface IidentObject
     {

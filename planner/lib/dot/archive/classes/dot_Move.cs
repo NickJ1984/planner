@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-using lib.dot.iFaces;
-using lib.types;
+using lib.dot.archive.iFaces;
 using lib.delegates;
-using lib.service;
 
-namespace lib.dot.classes
+namespace lib.dot.archive.classes
 {
     public class dot_Move : IDot_Move
     {

@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using lib.types;
-using lib.dot.classes;
-using lib.delegates;
+using lib.dot.archive.classes;
 
-namespace lib.dot.iFaces
+namespace lib.dot.archive.iFaces
 {
     public interface IDot_Value
     {
@@ -23,12 +18,5 @@ namespace lib.dot.iFaces
 
         void reset();
         void reset(DateTime startDate, e_dot_stateValue startState = e_dot_stateValue.Source);
-    }
-    public interface IDot_Value2
-    {
-        bool enabled { get; set; }
-        DateTime date { get; set; }
-
-        event EventHandler<eventArgs_valueChange<DateTime>> event_dateChanged;
     }
 }

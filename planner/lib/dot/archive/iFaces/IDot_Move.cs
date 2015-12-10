@@ -1,15 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using lib.types;
 using lib.delegates;
-using lib.dot.classes;
-using lib.types;
 
-namespace lib.dot.iFaces
+namespace lib.dot.archive.iFaces
 {
     public interface IDot_Move
     {

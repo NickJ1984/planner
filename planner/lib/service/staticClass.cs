@@ -61,5 +61,20 @@ namespace lib.service
             MemberExpression expressionBody = (MemberExpression)memberExpression.Body;
             return expressionBody.Member.Name;
         }
+
+        public static double getRange(DateTime dst, DateTime src, bool leftDirection = true, bool negativeResult = true)
+        {
+            double result = (leftDirection) ? src.Subtract(dst).Days : dst.Subtract(src).Days;
+            return (negativeResult) ? result : (result < 0) ? 0 : result;
+        }
+        public static double getRangeDirection(DateTime src, DateTime dst)
+        {
+            int mv = determineDirection(src, dst);
+
+            if (mv == 1) return getRange(dst, src, false);
+            if (mv == -1) return getRange(dst, src, true);
+
+            return 0;
+        }
     }
 }

@@ -1,11 +1,11 @@
 ﻿using System;
-using lib.dot.abstracts;
-using lib.dot.iFaces;
+using lib.dot.archive.abstracts;
+using lib.dot.archive.iFaces;
 using lib.types;
 using lib.delegates;
 
 
-namespace lib.dot.classes
+namespace lib.dot.archive.classes
 {
 
     public class dot_Fixer : ADot_Fixer, IDot_Fixer

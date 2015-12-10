@@ -1,10 +1,8 @@
 ﻿using System;
 
 using lib.types;
-using lib.dot.abstracts;
-using lib.dot.iFaces;
 
-namespace lib.dot.iFaces
+namespace lib.dot.archive.iFaces
 {
     public interface IDot_Fixer
     {

@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using lib.dot.archive.iFaces;
 
-using lib.dot.iFaces;
-
-namespace lib.dot.abstracts
+namespace lib.dot.archive.abstracts
 {
     public abstract class ADot_Limit : ADot_MainValues
     {
