@@ -24,7 +24,7 @@ namespace lib.limits.classes
         private e_tskLimit _limitType;
         private const e_tskLimit defaultLimit = e_tskLimit.Earlier;
 
-        private IProjectInfo projInfo;
+        private IProjectInfo _projectInformation;
 
         private DateTime _limitDate;
 
@@ -43,6 +43,9 @@ namespace lib.limits.classes
         #endregion
 
         #region functions
+        private Func<DateTime> fncProjectStart;
+        private Func<DateTime> fncProjectFinish;
+
         private Func<DateTime, DateTime> fncLocalCheck;
         private Func<DateTime, DateTime> fncOuterCheck;
         private Func<DateTime, DateTime> fncFirstCheck;
@@ -73,6 +76,11 @@ namespace lib.limits.classes
 
         #endregion
         #region Properties
+        public IProjectInfo projectInformation
+        {
+            get { return _projectInformation; }
+            set { __prp_projectInformation_write(value); }
+        }
         public DateTime limitDate
         {
             get { return _limitDate; }
@@ -122,7 +130,8 @@ namespace lib.limits.classes
         {
             get { return getDuration(); }
         }
-        
+        protected DateTime projStart { get { return fncProjectStart(); } }
+        protected DateTime projFinish { get { return fncProjectFinish(); } }
         #endregion
         #region Delegates
         private Func<double> _getDuration;
@@ -130,7 +139,7 @@ namespace lib.limits.classes
         #region Constructors
         public period_localLimit(IProjectInfo pInfo, IDot start, IDot finish, e_tskLimit lType)
         {
-            init_projectInfo(pInfo);
+            projectInformation = pInfo;
             this.start = start;
             this.finish = finish;
             _limitDate = start.date;
@@ -149,15 +158,16 @@ namespace lib.limits.classes
         public period_localLimit(IProjectInfo pInfo, IDot start, IDot finish)
             :this(pInfo, start, finish, defaultLimit)
         { }
-        private void init_projectInfo(IProjectInfo pInfo)
-        {
-            projInfo = pInfo;
-
-            projInfo.event_startChanged += handler_projectStartChanged;
-            projInfo.event_finishChanged += handler_projectFinishChanged;
-        }
+        public period_localLimit(IDot start, IDot finish)
+            : this(null, start, finish, defaultLimit)
+        { }
         #endregion
         #region Methods
+        public void connectDuration(IPeriod_duration duration)
+        {
+            getDuration = duration.getDuration;
+            duration.event_durationChanged += handler_durationChanged;
+        }
         private DateTime masterCheck(DateTime Date)
         {
             DateTime result = fncFirstCheck(Date);
@@ -230,34 +240,27 @@ namespace lib.limits.classes
 
         #endregion
         #region Handlers
+        #region outer handlers
         public void handler_durationChanged(object sender, eventArgs_valueChange<double> e)
         {
             slaveUpdate();
         }
-        public void connectDuration(IPeriod_duration duration)
-        {
-            getDuration = duration.getDuration;
-            duration.event_durationChanged += handler_durationChanged;
-        }
-
+        #endregion
+        #region inner handlers
         private void handler_projectStartChanged(object sender, eventArgs_valueChange<DateTime> e)
         {
-            if (limitType == e_tskLimit.Earlier)
-            {
-                masterUpdate();
-                slaveUpdate();
-            }
+            masterUpdate();
+            slaveUpdate();
         }
         private void handler_projectFinishChanged(object sender, eventArgs_valueChange<DateTime> e)
         {
-            if (limitType == e_tskLimit.Later)
-            {
-                masterUpdate();
-                slaveUpdate();
-            }
+            masterUpdate();
+            slaveUpdate();
         }
         #endregion
+        #endregion
         #region Handlers self
+        #region initializers
         private void init_eventsInternal()
         {
             ev_durationParentChanged += __handler_durationParentChanged;
@@ -265,18 +268,33 @@ namespace lib.limits.classes
             ev_outerLimitChanged += __handler_outerLimitChanged;
             ev_limitDateChanged += __handler_limitDateChanged;
         }
-
-
-        private void onOuterLimitObjectChange(ILimit_check ilcObject)
+        #endregion
+        #region inner events handlers
+        private void __handler_durationParentChanged(object sender, EventArgs e)
         {
-            _outerLimit.event_update -= onOuterLimitUpdate;
-
-            _outerLimit = (ilcObject == null) ? dmyChk : ilcObject;
-
-            _outerLimit.event_update += onOuterLimitUpdate;
-
-            ev_outerLimitChanged(this, new EventArgs());
+            slaveUpdate();
         }
+        private void __handler_limitTypeChanged(object sender, EventArgs e)
+        {
+            masterUpdate();
+            slaveUpdate();
+        }
+        private void __handler_outerLimitChanged(object sender, EventArgs e)
+        {
+            init_outerLimit();
+            funcFSInvert();
+
+            masterUpdate();
+            slaveUpdate();
+        }
+        private void __handler_limitDateChanged(object sender, EventArgs e)
+        {
+            masterUpdate();
+            slaveUpdate();
+        }
+
+        #endregion
+        #region outer events handlers
         private void onOuterLimitUpdate(object sender, EventArgs e)
         {
             if (_limitType != e_tskLimit.finishFixed && _limitType != e_tskLimit.startFixed)
@@ -285,6 +303,8 @@ namespace lib.limits.classes
                 slaveUpdate();
             }
         }
+        #endregion
+        #region outer events invokes
         private void onLimitDateChange(eventArgs_valueChange<DateTime> args)
         {
             EventHandler<eventArgs_valueChange<DateTime>> handler = event_limitDateChanged;
@@ -298,33 +318,18 @@ namespace lib.limits.classes
 
             if (handler != null) handler(this, args);
         }
-
-        private void __handler_limitDateChanged(object sender, EventArgs e)
+        #endregion
+        #region properties handlers
+        private void onOuterLimitObjectChange(ILimit_check ilcObject)
         {
-            masterUpdate();
-            slaveUpdate();
+            _outerLimit.event_update -= onOuterLimitUpdate;
+
+            _outerLimit = (ilcObject == null) ? dmyChk : ilcObject;
+
+            _outerLimit.event_update += onOuterLimitUpdate;
+
+            ev_outerLimitChanged(this, new EventArgs());
         }
-
-        private void __handler_outerLimitChanged(object sender, EventArgs e)
-        {
-            init_outerLimit();
-            funcFSInvert();
-
-            masterUpdate();
-            slaveUpdate();
-        }
-
-        private void __handler_limitTypeChanged(object sender, EventArgs e)
-        {
-            masterUpdate();
-            slaveUpdate();
-        }
-
-        private void __handler_durationParentChanged(object sender, EventArgs e)
-        {
-            slaveUpdate();
-        }
-
         private void __prp_limitType_write(e_tskLimit Value)
         {
             if (_limitType == Value) return;
@@ -332,7 +337,7 @@ namespace lib.limits.classes
             e_tskLimit temp = _limitType;
             _limitType = Value;
 
-            switch(Value)
+            switch (Value)
             {
                 case e_tskLimit.Earlier:
                     setMasterStart(true);
@@ -368,12 +373,55 @@ namespace lib.limits.classes
 
             onLimitTypeChange(new eventArgs_valueChange<e_tskLimit>(temp, _limitType));
         }
+        private void __prp_projectInformation_write(IProjectInfo ipInfo)
+        {
+            if(_projectInformation !=null)
+            {
+                _projectInformation.event_startChanged -= handler_projectStartChanged;
+                _projectInformation.event_finishChanged -= handler_projectFinishChanged;
+            }
+            if(ipInfo != null)
+            {
+                ipInfo.event_startChanged += handler_projectStartChanged;
+                ipInfo.event_finishChanged += handler_projectFinishChanged;
+            }
+
+            _projectInformation = ipInfo;
+
+            __function_write_projectFinish(ipInfo);
+            __function_write_projectStart(ipInfo);
+        }
+        #region __prp_projectInformation_write referred
+        private void __function_write_projectStart(IProjectInfo ipInfo)
+        {
+            if (ipInfo == null)
+            {
+                fncProjectStart = () => start.date;
+            }
+            else
+            {
+                fncProjectStart = () => ipInfo.start;
+            }
+        }
+        private void __function_write_projectFinish(IProjectInfo ipInfo)
+        {
+            if (ipInfo == null)
+            {
+                fncProjectFinish = () => finish.date;
+            }
+            else
+            {
+                fncProjectFinish = () => ipInfo.finish;
+            }
+        }
+        #endregion
+        #endregion
         #endregion
         #region Expression trees
         private void init_expTreeParameters()
         {
-            eFncEarlier = (date) => projInfo.start;
-            eFncLater = (date) => projInfo.finish;
+            eFncEarlier = (date) => projStart;
+            eFncLater = (date) => projFinish;
             eFncNotEarlier = (date) => (date >= _limitDate) ? date : _limitDate;
             eFncNotLater = (date) => (date <= _limitDate) ? date : _limitDate;
             eFncFixed = (date) => _limitDate;
