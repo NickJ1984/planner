@@ -24,7 +24,7 @@ namespace lib.limits.classes
         private e_tskLimit _limitType;
         private const e_tskLimit defaultLimit = e_tskLimit.Earlier;
 
-        private IProjectInfo _projectInformation;
+        private IProject_dates projectInformation;
 
         private DateTime _limitDate;
 
@@ -34,6 +34,7 @@ namespace lib.limits.classes
         private IDot slave;
 
         private ILimit_check _outerLimit;
+        private IPeriod_duration _ipdDuration;
 
         private readonly dotCheckDate dcdSlave;
         private readonly dotCheckDate dcdMaster;
@@ -43,13 +44,17 @@ namespace lib.limits.classes
         #endregion
 
         #region functions
+        private Func<double> fncDuration;
+
         private Func<DateTime> fncProjectStart;
         private Func<DateTime> fncProjectFinish;
+        private Func<DateTime> fncExpLimit;
 
         private Func<DateTime, DateTime> fncLocalCheck;
         private Func<DateTime, DateTime> fncOuterCheck;
         private Func<DateTime, DateTime> fncFirstCheck;
         private Func<DateTime, DateTime> fncSecondCheck;
+        private Func<DateTime, DateTime> fncSlaveCheck;
         #endregion
 
         #region flags
@@ -63,24 +68,20 @@ namespace lib.limits.classes
 
         #region expTree variables
         private ParameterExpression pDate = Expression.Parameter(typeof(DateTime));
+        private ParameterExpression pLimit = Expression.Parameter(typeof(DateTime));
         private ParameterExpression pResult = Expression.Parameter(typeof(DateTime));
+        private ParameterExpression pDuration = Expression.Parameter(typeof(double));
 
-        private Expression<Func<DateTime, DateTime>> eFncEarlier;
-        private Expression<Func<DateTime, DateTime>> eFncLater;
-        private Expression<Func<DateTime, DateTime>> eFncNotEarlier;
-        private Expression<Func<DateTime, DateTime>> eFncNotLater;
-        private Expression<Func<DateTime, DateTime>> eFncFixed;
+        private Expression eCompare;
 
-        private InvocationExpression eInvoke;
+        private Expression<Func<DateTime>> eFncExpLimit;
+        private Expression<Func<double>> eFncGetDuration;
+
         #endregion
 
         #endregion
         #region Properties
-        public IProjectInfo projectInformation
-        {
-            get { return _projectInformation; }
-            set { __prp_projectInformation_write(value); }
-        }
+
         public DateTime limitDate
         {
             get { return _limitDate; }
@@ -113,61 +114,111 @@ namespace lib.limits.classes
                 }
             }
         }
-        public Func<double> getDuration
-        {
-            get { return _getDuration; }
-            set
-            {
-                if (_getDuration != value)
-                {
-                    _getDuration = (value == null) ? durNull : value;
-                    ev_durationParentChanged(this, new EventArgs());
-                }
-            }
-        }
 
         protected double duration
         {
-            get { return getDuration(); }
+            get { return fncDuration(); }
         }
-        protected DateTime projStart { get { return fncProjectStart(); } }
-        protected DateTime projFinish { get { return fncProjectFinish(); } }
+        protected DateTime prjStart { get { return fncProjectStart(); } }
+        protected DateTime prjFinish { get { return fncProjectFinish(); } }
         #endregion
         #region Delegates
-        private Func<double> _getDuration;
+        
         #endregion
         #region Constructors
-        public period_localLimit(IProjectInfo pInfo, IDot start, IDot finish, e_tskLimit lType)
+        #region constructors
+        public period_localLimit(IDot start, IDot finish, e_tskLimit lType)
         {
-            projectInformation = pInfo;
-            this.start = start;
-            this.finish = finish;
-            _limitDate = start.date;
-            _outerLimit = dmyChk;
-            _getDuration = durNull;
-            
-            init_outerLimit();
-            init_expTreeParameters();
             init_eventsInternal();
 
             dcdSlave = new dotCheckDate(slaveCheck);
             dcdMaster = new dotCheckDate(masterCheck);
 
+            _outerLimit = dmyChk;
+            fncDuration = durNull;
+
+            init_outerLimit();
+            init_expTreeParameters();
+
+            connectProject(null);
+
+            this.start = start;
+            this.finish = finish;
+            _limitDate = start.date;
+
             limitType = lType;
         }
-        public period_localLimit(IProjectInfo pInfo, IDot start, IDot finish)
-            :this(pInfo, start, finish, defaultLimit)
-        { }
         public period_localLimit(IDot start, IDot finish)
-            : this(null, start, finish, defaultLimit)
+            : this(start, finish, defaultLimit)
         { }
         #endregion
+        #region initializers
+        private void init_outerLimit()
+        {
+            fncOuterCheck = outerLimit.checkDate;
+        }
+        private void init_eventsInternal()
+        {
+            ev_limitTypeChanged += __handler_limitTypeChanged;
+            ev_outerLimitChanged += __handler_outerLimitChanged;
+            ev_limitDateChanged += __handler_limitDateChanged;
+        }
+        private void init_expTreeParameters()
+        {
+            eFncExpLimit = () => fncExpLimit();
+            eFncGetDuration = () => fncDuration();
+        }
+        #endregion
+        #endregion
         #region Methods
+        #region connectors
         public void connectDuration(IPeriod_duration duration)
         {
-            getDuration = duration.getDuration;
-            duration.event_durationChanged += handler_durationChanged;
+            if(_ipdDuration != null)
+            { _ipdDuration.event_durationChanged -= handler_durationChanged; }
+
+            _ipdDuration = duration;
+
+            if (duration != null)
+            { _ipdDuration.event_durationChanged += handler_durationChanged; }
+
+            fncDuration = (_ipdDuration != null) ? _ipdDuration.getDuration : durNull;
+
+            slaveUpdate();
         }
+        public void connectProject(IProject_dates pInfo)
+        {
+            if (projectInformation != null)
+            {
+                projectInformation.event_startChanged -= handler_projectStartChanged;
+                projectInformation.event_finishChanged -= handler_projectFinishChanged;
+            }
+
+            projectInformation = pInfo;
+
+            if (pInfo != null)
+            {
+                pInfo.event_startChanged += handler_projectStartChanged;
+                pInfo.event_finishChanged += handler_projectFinishChanged;
+
+                fncProjectStart = () => projectInformation.start;
+                fncProjectFinish = () => projectInformation.finish;
+            }
+            else
+            {
+                fncProjectStart = () => start.date;
+                fncProjectFinish = () => finish.date;
+            }
+            __prp_limitType_write(_limitType);
+
+            if (limitType == e_tskLimit.Earlier || limitType == e_tskLimit.Later)
+            {
+                masterUpdate();
+                slaveUpdate();
+            }
+        }
+        #endregion
+        #region checkers
         private DateTime masterCheck(DateTime Date)
         {
             DateTime result = fncFirstCheck(Date);
@@ -175,14 +226,12 @@ namespace lib.limits.classes
         }
         private DateTime slaveCheck(DateTime Date)
         {
-            return (isStartMaster) ? master.date.AddDays(duration) : master.date.AddDays(-duration);
+            return fncSlaveCheck(master.date);
         }
         #endregion
+        #endregion
         #region Service
-        private void init_outerLimit()
-        {
-            fncOuterCheck = outerLimit.checkDate;
-        }
+        #region master & slave
         private void masterUpdate()
         {
             dcdMaster.update();
@@ -206,9 +255,11 @@ namespace lib.limits.classes
                 slave = this.start; 
             }
 
+            __eTree_makeSlaveCheck();
             slave.dotLimitCheck = dcdSlave;
             master.dotLimitCheck = dcdMaster;
         }
+        #endregion
         private void funcFSInvert(bool invert)
         {
             __imv_funcFSInvert = invert;
@@ -231,7 +282,6 @@ namespace lib.limits.classes
         #region Events
 
         private event EventHandler ev_outerLimitChanged;
-        private event EventHandler ev_durationParentChanged;
         private event EventHandler ev_limitTypeChanged;
         private event EventHandler ev_limitDateChanged;
 
@@ -240,13 +290,10 @@ namespace lib.limits.classes
 
         #endregion
         #region Handlers
-        #region outer handlers
-        public void handler_durationChanged(object sender, eventArgs_valueChange<double> e)
+        private void handler_durationChanged(object sender, eventArgs_valueChange<double> e)
         {
             slaveUpdate();
         }
-        #endregion
-        #region inner handlers
         private void handler_projectStartChanged(object sender, eventArgs_valueChange<DateTime> e)
         {
             masterUpdate();
@@ -258,17 +305,7 @@ namespace lib.limits.classes
             slaveUpdate();
         }
         #endregion
-        #endregion
         #region Handlers self
-        #region initializers
-        private void init_eventsInternal()
-        {
-            ev_durationParentChanged += __handler_durationParentChanged;
-            ev_limitTypeChanged += __handler_limitTypeChanged;
-            ev_outerLimitChanged += __handler_outerLimitChanged;
-            ev_limitDateChanged += __handler_limitDateChanged;
-        }
-        #endregion
         #region inner events handlers
         private void __handler_durationParentChanged(object sender, EventArgs e)
         {
@@ -332,8 +369,6 @@ namespace lib.limits.classes
         }
         private void __prp_limitType_write(e_tskLimit Value)
         {
-            if (_limitType == Value) return;
-
             e_tskLimit temp = _limitType;
             _limitType = Value;
 
@@ -341,30 +376,88 @@ namespace lib.limits.classes
             {
                 case e_tskLimit.Earlier:
                     setMasterStart(true);
-                    eTree_generateLocalCheck(Value);
+
+                    fncExpLimit = fncProjectStart;
+                    __eTree_makeBinary(ExpressionType.NotEqual, pDate, pDate);
+                    __eTree_generateLocalCheck(Value);
+
                     funcFSInvert(true);
                     break;
 
+
                 case e_tskLimit.startFixed:
+                    setMasterStart(true);
+
+                    fncExpLimit = () => limitDate;
+                    __eTree_makeBinary(ExpressionType.NotEqual, pDate, pDate);
+                    __eTree_generateLocalCheck(Value);
+
+                    funcFSInvert(false);
+                    break;
+
+
                 case e_tskLimit.startNotEarlier:
+                    setMasterStart(true);
+
+                    fncExpLimit = () => limitDate;
+                    __eTree_makeBinary(ExpressionType.GreaterThanOrEqual, pDate, pLimit);
+                    __eTree_generateLocalCheck(Value);
+
+                    funcFSInvert(false);
+                    break;
+
+
                 case e_tskLimit.startNotLater:
                     setMasterStart(true);
-                    eTree_generateLocalCheck(Value);
+
+                    fncExpLimit = () => limitDate;
+                    __eTree_makeBinary(ExpressionType.LessThanOrEqual, pDate, pLimit);
+                    __eTree_generateLocalCheck(Value);
+
                     funcFSInvert(false);
                     break;
 
 
                 case e_tskLimit.Later:
                     setMasterStart(false);
-                    eTree_generateLocalCheck(Value);
+
+                    fncExpLimit = fncProjectFinish;
+                    __eTree_makeBinary(ExpressionType.NotEqual, pDate, pDate);
+                    __eTree_generateLocalCheck(Value);
+
                     funcFSInvert(true);
                     break;
 
+
                 case e_tskLimit.finishFixed:
+                    setMasterStart(false);
+
+                    fncExpLimit = () => limitDate;
+                    __eTree_makeBinary(ExpressionType.NotEqual, pDate, pDate);
+                    __eTree_generateLocalCheck(Value);
+
+                    funcFSInvert(false);
+                    break;
+
+
                 case e_tskLimit.finishNotEarlier:
+                    setMasterStart(false);
+
+                    fncExpLimit = () => limitDate;
+                    __eTree_makeBinary(ExpressionType.GreaterThanOrEqual, pDate, pLimit);
+                    __eTree_generateLocalCheck(Value);
+
+                    funcFSInvert(false);
+                    break;
+
+
                 case e_tskLimit.finishNotLater:
                     setMasterStart(false);
-                    eTree_generateLocalCheck(Value);
+
+                    fncExpLimit = () => limitDate;
+                    __eTree_makeBinary(ExpressionType.LessThanOrEqual, pDate, pLimit);
+                    __eTree_generateLocalCheck(Value);
+
                     funcFSInvert(false);
                     break;
             }
@@ -373,100 +466,41 @@ namespace lib.limits.classes
 
             onLimitTypeChange(new eventArgs_valueChange<e_tskLimit>(temp, _limitType));
         }
-        private void __prp_projectInformation_write(IProjectInfo ipInfo)
-        {
-            if(_projectInformation !=null)
-            {
-                _projectInformation.event_startChanged -= handler_projectStartChanged;
-                _projectInformation.event_finishChanged -= handler_projectFinishChanged;
-            }
-            if(ipInfo != null)
-            {
-                ipInfo.event_startChanged += handler_projectStartChanged;
-                ipInfo.event_finishChanged += handler_projectFinishChanged;
-            }
-
-            _projectInformation = ipInfo;
-
-            __function_write_projectFinish(ipInfo);
-            __function_write_projectStart(ipInfo);
-        }
-        #region __prp_projectInformation_write referred
-        private void __function_write_projectStart(IProjectInfo ipInfo)
-        {
-            if (ipInfo == null)
-            {
-                fncProjectStart = () => start.date;
-            }
-            else
-            {
-                fncProjectStart = () => ipInfo.start;
-            }
-        }
-        private void __function_write_projectFinish(IProjectInfo ipInfo)
-        {
-            if (ipInfo == null)
-            {
-                fncProjectFinish = () => finish.date;
-            }
-            else
-            {
-                fncProjectFinish = () => ipInfo.finish;
-            }
-        }
-        #endregion
         #endregion
         #endregion
         #region Expression trees
-        private void init_expTreeParameters()
+        private void __eTree_generateLocalCheck(e_tskLimit Value)
         {
-            eFncEarlier = (date) => projStart;
-            eFncLater = (date) => projFinish;
-            eFncNotEarlier = (date) => (date >= _limitDate) ? date : _limitDate;
-            eFncNotLater = (date) => (date <= _limitDate) ? date : _limitDate;
-            eFncFixed = (date) => _limitDate;
-        }
-        
-        private void eTree_generateLocalCheck(e_tskLimit Value)
-        {
-            switch(Value)
-            {
-                case e_tskLimit.Earlier:
-                    __eTree_chngInvokeFunc(eFncEarlier);
-                    break;
-
-                case e_tskLimit.Later:
-                    __eTree_chngInvokeFunc(eFncLater);
-                    break;
-
-                case e_tskLimit.finishFixed:
-                case e_tskLimit.startFixed:
-                    __eTree_chngInvokeFunc(eFncFixed);
-                    break;
-
-                case e_tskLimit.finishNotEarlier:
-                case e_tskLimit.startNotEarlier:
-                    __eTree_chngInvokeFunc(eFncNotEarlier);
-                    break;
-
-                case e_tskLimit.finishNotLater:
-                case e_tskLimit.startNotLater:
-                    __eTree_chngInvokeFunc(eFncNotLater);
-                    break;
-            }
-
             BlockExpression block = Expression.Block(
                 typeof(DateTime),
-                new[] {pResult},
-                Expression.Assign(pResult, eInvoke),
+                new[] { pResult, pLimit },
+
+                Expression.IfThenElse(eCompare,
+                Expression.Assign(pResult, pDate),
+                Expression.Assign(pResult, Expression.Invoke(eFncExpLimit))),
                 pResult
                 );
 
             fncLocalCheck = Expression.Lambda<Func<DateTime, DateTime>>(block, pDate).Compile();
         }
-        private void __eTree_chngInvokeFunc(Expression<Func<DateTime, DateTime>> expFunc)
+        private void __eTree_makeSlaveCheck()
         {
-            eInvoke = Expression.Invoke(expFunc, pDate);
+            Expression eNegate = Expression.Negate(pDuration);
+            Expression eCall = Expression.Call(pDate, typeof(DateTime).GetMethod("AddDays"), (isStartMaster) ? pDuration : eNegate);
+
+            BlockExpression block = Expression.Block(
+                typeof(DateTime),
+                new[] {pResult, pDuration},
+                Expression.Assign(pDuration, Expression.Invoke(eFncGetDuration)),
+                Expression.Assign(pResult, eCall),
+                pResult
+                );
+
+            fncSlaveCheck = Expression.Lambda<Func<DateTime, DateTime>>(block, pDate).Compile();
+        }
+        private void __eTree_makeBinary(ExpressionType et, Expression left, Expression right)
+        {
+            eCompare = Expression.MakeBinary(et, left, right);
         }
         #endregion
         #region Overrides

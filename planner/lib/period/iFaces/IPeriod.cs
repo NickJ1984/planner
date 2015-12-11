@@ -10,7 +10,7 @@ namespace lib.period.iFaces
 {
     public interface IPeriod
     {
-        IProjectInfo projectInfo { get; }
+        IProject_dates projectInfo { get; }
 
         event EventHandler event_startChanged;
         event EventHandler event_finishChanged;
