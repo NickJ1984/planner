@@ -63,6 +63,7 @@
     <Compile Include="lib\limits\classes\period_limit.cs" />
     <Compile Include="lib\limits\delegates\limit_Delegates.cs" />
     <Compile Include="lib\limits\iFaces\ILimit.cs" />
+    <Compile Include="lib\limits\iFaces\IPeriod_localLimit.cs" />
     <Compile Include="lib\Link\abstracts\ALnk_Base.cs" />
     <Compile Include="lib\Link\classes\dot_DateLinker.cs" />
     <Compile Include="lib\period\abstracts\APeriod_Base.cs" />
@@ -70,7 +71,9 @@
     <Compile Include="lib\dot\archive\iFaces\IDot_Fixer.cs" />
     <Compile Include="lib\dot\archive\iFaces\IDot_mainValues.cs" />
     <Compile Include="lib\period\classes\period.cs" />
+    <Compile Include="lib\period\classes\prd_duration.cs" />
     <Compile Include="lib\period\iFaces\IPeriod.cs" />
+    <Compile Include="lib\period\iFaces\IPeriod_duration.cs" />
     <Compile Include="lib\project\iFaces\IProject.cs" />
     <Compile Include="lib\service\archive\classes.cs" />
     <Compile Include="lib\interfaces\archive\service.cs" />

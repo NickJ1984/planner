@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using lib.types;
 using lib.interfaces;
+using lib.delegates;
 using lib.limits.delegates;
 using lib.limits.classes;
 
@@ -14,6 +15,8 @@ namespace lib.limits.iFaces
     public interface ILimit_check
     {
         DateTime checkDate(DateTime Date);
+
+        event EventHandler event_update;
     }
     public interface ILimit_values
     {

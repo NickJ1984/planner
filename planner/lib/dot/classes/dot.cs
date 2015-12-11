@@ -25,11 +25,7 @@ namespace lib.dot.classes
         public ILimit_check dotLimitCheck
         {
             get { return localLimit; }
-            set
-            {
-                if (value == null) localLimit = new limitDummy();
-                else localLimit = value;
-            }
+            set { __property_write_dotLimitCheck(value); }
         }
         public DateTime date
         {
@@ -59,16 +55,35 @@ namespace lib.dot.classes
         #region Events
         public event EventHandler<eventArgs_valueChange<DateTime>> event_dateChanged;
         #endregion
+        #region Service
+        private void __property_write_dotLimitCheck(ILimit_check ilcObject)
+        {
+            if (ilcObject == localLimit) return;
+
+            localLimit.event_update -= onLimitCheckUpdate;
+
+            if (ilcObject == null) localLimit = new limitDummy();
+            else localLimit = ilcObject;
+
+            localLimit.event_update += onLimitCheckUpdate;
+        }
+        #endregion
         #region Handlers self
         private void onDateChanged(eventArgs_valueChange<DateTime> args)
         {
             EventHandler<eventArgs_valueChange<DateTime>> handler = event_dateChanged;
             if (handler != null) handler(this, args);
         }
+        private void onLimitCheckUpdate(object sender, EventArgs e)
+        {
+            date = _date;
+        }
         #endregion
         #region internal entities
         private class limitDummy : ILimit_check
         {
+            public event EventHandler event_update;
+
             public DateTime checkDate(DateTime Date)
             {
                 return Date;

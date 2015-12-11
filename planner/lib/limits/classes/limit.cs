@@ -15,7 +15,7 @@ namespace lib.limits.classes
 {
     
 
-    public class limit : ILimit
+    public class limit
     {
         #region expressions
         ConstantExpression cFreeSpace = Expression.Constant((double)-1, typeof(double));
