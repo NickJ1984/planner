@@ -15,7 +15,7 @@ namespace lib.limits.classes
 {
     
 
-    public class limit
+    public class lim
     {
         #region expressions
         ConstantExpression cFreeSpace = Expression.Constant((double)-1, typeof(double));
@@ -89,7 +89,7 @@ namespace lib.limits.classes
         }
         #endregion
         #region Constructors
-        public limit(e_dot_Limit vLimit, DateTime Date)
+        public lim(e_dot_Limit vLimit, DateTime Date)
         {
             _direction = -10;
             initExpressionValues();
@@ -97,7 +97,7 @@ namespace lib.limits.classes
             date = Date;
             initInternal();
         }
-        public limit()
+        public lim()
             :this(e_dot_Limit.None , __hlp.initDate)
         { }
 
@@ -292,7 +292,7 @@ namespace lib.limits.classes
             DateTime oDate;
 
             if (tObj == typeof(DateTime)) oDate = (DateTime)obj;
-            else if (typeof(ILimit).IsAssignableFrom(tObj)) oDate = ((ILimit)obj).date;
+            else if (typeof(ILim).IsAssignableFrom(tObj)) oDate = ((ILim)obj).date;
             else return 1;
 
             if (date > oDate) return 1;
@@ -300,12 +300,12 @@ namespace lib.limits.classes
             else return -1;
         }
 
-        public bool Equals(ILimit other)
+        public bool Equals(ILim other)
         {
             if (direction == other.direction && date == other.date) return true;
             return false;
         }
-        public bool isAllowed(ILimit limit)
+        public bool isAllowed(ILim limit)
         {
             if (limit.limitType == e_dot_Limit.None) return false;
 
@@ -322,6 +322,8 @@ namespace lib.limits.classes
         }
         #endregion
     }
+
+    
 
 
 }

@@ -65,5 +65,13 @@ namespace lib.types
         finishDate = 4
     }
     #endregion
-    
-}
+    #region Limit
+    public enum e_limDirection
+    {
+        Fixed = 0,
+        Left = 2,
+        Right = 4,
+        Range = 8
+    }
+    #endregion
+    }
