@@ -13,20 +13,14 @@ namespace lib.function.classes
     using alias_fncStatic = System.Func<DateTime, DateTime>;
     using alias_fncRange = System.Func<DateTime, DateTime, double>; //-1 - бесконечно; 0 - точка
     using alias_fncDynamic = System.Func<e_limDirection, DateTime, DateTime, DateTime, DateTime>;
+    using alias_fncDirDynamic = System.Func<DateTime, DateTime, DateTime, DateTime>;
+    using alias_fncDirDynamic1 = System.Func<DateTime, DateTime, DateTime>;
 
     public class functionGenerator
     {
         #region values
-        #region dictionaries
-        Dictionary<e_dtMtd, string> dtMtd;
-        #endregion
+
         #region enums
-        private enum e_dtMtd
-        {
-            Subtract = 1,
-            AddDays = 2,
-        }
-        #region constant
         #region direction
         private const ExpressionType ctEqual = ExpressionType.Equal;
         private const ExpressionType ctNotEq = ExpressionType.NotEqual;
@@ -36,7 +30,19 @@ namespace lib.function.classes
         private const ExpressionType ctLsr = ExpressionType.LessThan;
         #endregion
         #endregion
+        #region constant
+        #region types
+        private readonly Type tDT = typeof(DateTime);
+        private readonly Type tDBL = typeof(double);
+        private readonly Type tINT = typeof(int);
+        private readonly Type tTS = typeof(TimeSpan);
+        private readonly Type tDIR = typeof(e_limDirection);
         #endregion
+        #region functions
+
+        #endregion
+        #endregion
+
         #endregion
         #region expTreeVars
         #region Constants
@@ -50,23 +56,6 @@ namespace lib.function.classes
         #endregion
 
         #endregion
-        #region Parameters
-
-        #region DateTime
-        private ParameterExpression pMin = Expression.Parameter(typeof(DateTime));
-        private ParameterExpression pMax = Expression.Parameter(typeof(DateTime));
-        private ParameterExpression pDate = Expression.Parameter(typeof(DateTime));
-        private ParameterExpression pResult = Expression.Parameter(typeof(DateTime));
-        #endregion
-
-        #region double
-        private ParameterExpression pDouble = Expression.Parameter(typeof(double));
-        #endregion
-
-        #region direction
-        private ParameterExpression pDirection = Expression.Parameter(typeof(e_limDirection));
-        #endregion
-        #endregion
         #region expressions
 
         #region binary
@@ -74,9 +63,8 @@ namespace lib.function.classes
         private BinaryExpression eBinaryFalse;
         #endregion
 
-        #region comparison
-        #endregion
-        #region 1
+        #region lambda
+        private readonly Expression<Func<DateTime, DateTime, double>> lmbRange = (min, max) => max.Subtract(min).Days;
         #endregion
         #region 2
         #endregion
@@ -87,41 +75,25 @@ namespace lib.function.classes
         #endregion
         #endregion
         #region Initializers
-        public void init_Dictionaries()
-        {
-            dtMtd = new Dictionary<e_dtMtd, string>();
-            dtMtd.Add(e_dtMtd.AddDays, "AddDays");
-            dtMtd.Add(e_dtMtd.Subtract, "Subtract");
-        }
         public void init_Binary()
         {
             eBinaryFalse = Expression.MakeBinary(ExpressionType.NotEqual, cDNull, cDNull);
             eBinaryTrue = Expression.MakeBinary(ExpressionType.Equal, cDNull, cDNull);
 
         }
-        public void init_Comparison()
-        {
-
-        }
         #endregion
         #region helpers
-        #region expCall
-        #region DateTime
-        private MethodCallExpression CallDT(Expression instance, e_dtMtd Method, params Expression[] arguments)
-        {
-            return Call(instance, dtMtd[Method], arguments);
-        }
-        private MethodCallExpression CallDT(Expression instance, e_dtMtd Method)
-        {
-            return Call(instance, dtMtd[Method]);
-        }
+        #region vars & const
+        private ParameterExpression eParam(Type Type)
+        { return Expression.Parameter(Type); }
+        private ConstantExpression eConst(dynamic Value)
+        { return Expression.Constant(Value); }
         #endregion
-        #region Call
+        #region expCall
         private MethodCallExpression Call(Expression instance, string methodName, params Expression[] arguments)
         { return Expression.Call(instance, instance.Type.GetMethod(methodName), arguments); }
         private MethodCallExpression Call(Expression instance, string methodName)
         { return Expression.Call(instance, instance.Type.GetMethod(methodName)); }
-        #endregion
         #endregion
         #region expType
         private BinaryExpression DIRtoCMP(e_limDirection Direction, Expression Date, Expression MinLim, Expression MaxLim)
@@ -168,12 +140,11 @@ namespace lib.function.classes
         {
             return Expression.IfThenElse(cmp, True, False);
         }
-        private ConditionalExpression notLesserNull(Expression value, Expression writeResult)
+        private ConditionalExpression notLesserNull(Expression value, Expression writeResult, ConstantExpression cNull)
         {
-            ConstantExpression cNll = Expression.Constant(0, value.Type);
             return Expression.IfThenElse(
-                Expression.LessThan(value, cNll),
-                assign(writeResult, cNll),
+                Expression.LessThan(value, cNull),
+                assign(writeResult, cNull),
                 assign(writeResult, value)
                 );
         }
@@ -209,15 +180,209 @@ namespace lib.function.classes
         }
         #endregion
         #endregion
-        #region generators
-        public Func<DateTime, DateTime, DateTime, DateTime> generateDirLimit(e_limDirection direction)
+        #region constructor
+        public functionGenerator()
         {
-            throw new NotImplementedException();
+            init_Binary();
+        }
+        #endregion
+        #region generators
+        public Func<DateTime, DateTime, DateTime, DateTime> generateDynamicDir(e_limDirection direction)
+        {
+            BlockExpression block;
+
+            ParameterExpression pMin = Expression.Parameter(typeof(DateTime));
+            ParameterExpression pMax = Expression.Parameter(typeof(DateTime));
+            ParameterExpression pDate = Expression.Parameter(typeof(DateTime));
+            ParameterExpression pResult = Expression.Parameter(typeof(DateTime));
+            ParameterExpression pTemp = Expression.Parameter(typeof(DateTime));
+
+            switch (direction)
+            {
+                case e_limDirection.Fixed:
+                    block = Expression.Block(
+                        Expression.Assign(pResult, pMin)
+                        );
+                    break;
+
+                case e_limDirection.Left:
+                    block = Expression.Block(
+                        Expression.IfThenElse(
+                            Expression.LessThanOrEqual(pDate, pMax),
+                            Expression.Assign(pResult, pDate),
+                            Expression.Assign(pResult, pMax))
+                        );
+                    break;
+
+                case e_limDirection.Right:
+                    block = Expression.Block(
+                        Expression.IfThenElse(
+                            Expression.GreaterThanOrEqual(pDate, pMin),
+                            Expression.Assign(pResult, pDate),
+                            Expression.Assign(pResult, pMin))
+                        );
+                    break;
+
+                case e_limDirection.Range:
+                    block = Expression.Block(
+                        Expression.IfThenElse(
+                            Expression.LessThanOrEqual(pDate, pMax),
+                            Expression.Assign(pTemp, pDate),
+                            Expression.Assign(pTemp, pMax)),
+                        Expression.IfThenElse(
+                            Expression.GreaterThanOrEqual(pDate, pMin),
+                            Expression.Assign(pResult, pTemp),
+                            Expression.Assign(pResult, pMin))
+                        );
+                    break;
+
+                default:
+                    throw new Exception("Неверное значение параметра e_limDirection метода generateDynamicDir");
+            }
+
+            BlockExpression resBlock = Expression.Block(
+                typeof(DateTime),
+                new[] { pResult, pTemp },
+                block,
+                pResult
+                );
+
+            return Expression.Lambda<alias_fncDirDynamic>(resBlock, pMin, pMax, pDate).Compile();
         }
 
         public Func<e_limDirection, DateTime, DateTime, DateTime, DateTime> generateDynamic()
         {
-            throw new NotImplementedException();
+            //              direction       limMin    limMax    chkDate
+
+            ParameterExpression pDir = Expression.Parameter(typeof(e_limDirection));
+
+            ParameterExpression pMin = Expression.Parameter(typeof(DateTime));
+            ParameterExpression pMax = Expression.Parameter(typeof(DateTime));
+            ParameterExpression pDate = Expression.Parameter(typeof(DateTime));
+            ParameterExpression pResult = Expression.Parameter(typeof(DateTime));
+            ParameterExpression pTemp = Expression.Parameter(typeof(DateTime));
+
+            Expression cBLK;
+
+            BlockExpression block = Expression.Block(
+                typeof(DateTime),
+                new[] { pResult, pTemp },
+                Expression.Switch(
+                    pDir,
+                    new SwitchCase[]
+                    {
+                            Expression.SwitchCase(
+                                cBLK = Expression.Block(
+                                Expression.IfThen(
+                                    Expression.IsTrue(Expression.Constant(true)),
+                                    Expression.Assign(pResult, pMin))),
+                                Expression.Constant(e_limDirection.Fixed, typeof(e_limDirection))),
+
+                            Expression.SwitchCase(
+                                cBLK = Expression.Block(
+                                Expression.IfThenElse(
+                                    Expression.LessThanOrEqual(pDate, pMax),
+                                    Expression.Assign(pResult, pDate),
+                                    Expression.Assign(pResult, pMax))),
+                                Expression.Constant(e_limDirection.Left, typeof(e_limDirection))),
+
+                            Expression.SwitchCase(
+                                cBLK = Expression.Block(
+                                Expression.IfThenElse(
+                                    Expression.GreaterThanOrEqual(pDate, pMin),
+                                    Expression.Assign(pResult, pDate),
+                                    Expression.Assign(pResult, pMin))),
+                                Expression.Constant(e_limDirection.Right, typeof(e_limDirection))),
+
+                            Expression.SwitchCase(
+                                cBLK = Expression.Block(
+                                Expression.IfThenElse(
+                                    Expression.LessThanOrEqual(pDate, pMax),
+                                    Expression.Assign(pTemp, pDate),
+                                    Expression.Assign(pTemp, pMax)),
+                                Expression.IfThenElse(
+                                    Expression.GreaterThanOrEqual(pDate, pMin),
+                                    Expression.Assign(pResult, pTemp),
+                                    Expression.Assign(pResult, pMin))),
+                                Expression.Constant(e_limDirection.Range, typeof(e_limDirection)))
+                    }),
+                pResult
+                );
+            return Expression.Lambda<alias_fncDynamic>(block, pDir, pMin, pMax, pDate).Compile();
+        }
+
+        public Func<DateTime, DateTime> generateDynamic
+                (Func<e_limDirection> fDirection, Func<DateTime> fMinLimit, Func<DateTime> fMaxLimit)
+        {
+            ParameterExpression pMax = Expression.Parameter(typeof(DateTime));
+            ParameterExpression pMin = Expression.Parameter(typeof(DateTime));
+            ParameterExpression pDir = Expression.Parameter(typeof(e_limDirection));
+
+            Expression<Func<DateTime>> efMin = () => fMinLimit();
+            Expression<Func<DateTime>> efMax = () => fMaxLimit();
+            Expression<Func<e_limDirection>> efDir = () => fDirection();
+
+            Expression eSetMin = Expression.Assign(pMin, Expression.Invoke(efMin));
+            Expression eSetMax = Expression.Assign(pMax, Expression.Invoke(efMax));
+            Expression eSetDir = Expression.Assign(pDir, Expression.Invoke(efDir));
+
+            ParameterExpression pDate = Expression.Parameter(typeof(DateTime));
+            ParameterExpression pResult = Expression.Parameter(typeof(DateTime));
+            ParameterExpression pTemp = Expression.Parameter(typeof(DateTime));
+
+
+            Expression cBLK;
+
+            BlockExpression block = Expression.Block(
+                typeof(DateTime),
+                new[] { pResult, pTemp, pMin, pMax, pDir },
+                eSetDir,
+                eSetMin,
+                eSetMax,
+                Expression.Switch(
+                    pDir,
+                    new SwitchCase[]
+                    {
+                            Expression.SwitchCase(
+                                cBLK = Expression.Block(
+                                Expression.IfThen(
+                                    Expression.IsTrue(Expression.Constant(true)),
+                                    Expression.Assign(pResult, pMin))),
+                                Expression.Constant(e_limDirection.Fixed, typeof(e_limDirection))),
+
+                            Expression.SwitchCase(
+                                cBLK = Expression.Block(
+                                Expression.IfThenElse(
+                                    Expression.LessThanOrEqual(pDate, pMax),
+                                    Expression.Assign(pResult, pDate),
+                                    Expression.Assign(pResult, pMax))),
+                                Expression.Constant(e_limDirection.Left, typeof(e_limDirection))),
+
+                            Expression.SwitchCase(
+                                cBLK = Expression.Block(
+                                Expression.IfThenElse(
+                                    Expression.GreaterThanOrEqual(pDate, pMin),
+                                    Expression.Assign(pResult, pDate),
+                                    Expression.Assign(pResult, pMin))),
+                                Expression.Constant(e_limDirection.Right, typeof(e_limDirection))),
+
+                            Expression.SwitchCase(
+                                cBLK = Expression.Block(
+                                Expression.IfThenElse(
+                                    Expression.LessThanOrEqual(pDate, pMax),
+                                    Expression.Assign(pTemp, pDate),
+                                    Expression.Assign(pTemp, pMax)),
+                                Expression.IfThenElse(
+                                    Expression.GreaterThanOrEqual(pDate, pMin),
+                                    Expression.Assign(pResult, pTemp),
+                                    Expression.Assign(pResult, pMin))),
+                                Expression.Constant(e_limDirection.Range, typeof(e_limDirection)))
+                    }),
+                pResult
+                );
+
+
+            return Expression.Lambda<Func<DateTime, DateTime>>(block, pDate).Compile();
         }
 
         /*public Func<e_limDirection, DateTime, DateTime, DateTime, DateTime> generateDynamic(IFunctionGet function)
@@ -225,14 +390,13 @@ namespace lib.function.classes
             throw new NotImplementedException();
         }*/
 
-        public Func<DateTime, DateTime, double> generateLimitRange()
-        {
-            throw new NotImplementedException();
-        }
         public Func<DateTime, DateTime, double> generateLimitRange(e_limDirection direction)
         {
-            ConditionalExpression ceIF;
-            BlockExpression block;
+            ParameterExpression pMin = Expression.Parameter(tDT);
+            ParameterExpression pMax = Expression.Parameter(tDT);
+            ParameterExpression pDouble = Expression.Parameter(tDBL);
+
+            BlockExpression block = Expression.Block(typeof(double), cDNull);
 
             switch (direction)
             {
@@ -262,18 +426,79 @@ namespace lib.function.classes
                         Expression.Block(
                             typeof(double),
                             new[] { pDouble },
-                            assign(pDouble,
+                            assign(pDouble, Expression.Invoke(lmbRange, pMin, pMax)),
+                            notLesserNull(pDouble, pDouble, Expression.Constant((double)0)),
                             pDouble
                             );
                     break;
-
             }
-        }
-        /*public Func<DateTime, DateTime> generateStatic(IFunctionGet function)
-        {
-            throw new NotImplementedException();
-        }*/
-        #endregion
 
+            return Expression.Lambda<Func<DateTime, DateTime, double>>(block, pMin, pMax).Compile();
+        }
+
+        public Func<DateTime, DateTime> generateStatic
+                (e_limDirection direction, DateTime minLimit, DateTime maxLimit)
+        {
+            BlockExpression block;
+
+            ConstantExpression pMin = Expression.Constant(minLimit);
+            ConstantExpression pMax = Expression.Constant(maxLimit);
+            ParameterExpression pDate = Expression.Parameter(typeof(DateTime));
+            ParameterExpression pResult = Expression.Parameter(typeof(DateTime));
+            ParameterExpression pTemp = Expression.Parameter(typeof(DateTime));
+
+            switch (direction)
+            {
+                case e_limDirection.Fixed:
+                    block = Expression.Block(
+                        Expression.Assign(pResult, pMin)
+                        );
+                    break;
+
+                case e_limDirection.Left:
+                    block = Expression.Block(
+                        Expression.IfThenElse(
+                            Expression.LessThanOrEqual(pDate, pMax),
+                            Expression.Assign(pResult, pDate),
+                            Expression.Assign(pResult, pMax))
+                        );
+                    break;
+
+                case e_limDirection.Right:
+                    block = Expression.Block(
+                        Expression.IfThenElse(
+                            Expression.GreaterThanOrEqual(pDate, pMin),
+                            Expression.Assign(pResult, pDate),
+                            Expression.Assign(pResult, pMin))
+                        );
+                    break;
+
+                case e_limDirection.Range:
+                    block = Expression.Block(
+                        Expression.IfThenElse(
+                            Expression.LessThanOrEqual(pDate, pMax),
+                            Expression.Assign(pTemp, pDate),
+                            Expression.Assign(pTemp, pMax)),
+                        Expression.IfThenElse(
+                            Expression.GreaterThanOrEqual(pDate, pMin),
+                            Expression.Assign(pResult, pTemp),
+                            Expression.Assign(pResult, pMin))
+                        );
+                    break;
+
+                default:
+                    throw new Exception("Неверное значение параметра e_limDirection метода generateDynamicDir");
+            }
+
+            BlockExpression resBlock = Expression.Block(
+            typeof(DateTime),
+            new[] { pResult, pTemp },
+            block,
+            pResult
+            );
+
+            return Expression.Lambda<Func<DateTime, DateTime>>(resBlock, pDate).Compile();
+        }
+        #endregion
     }
 }

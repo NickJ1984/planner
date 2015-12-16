@@ -19,7 +19,7 @@ namespace lib.function.iFaces
         alias_fncStatic generateStatic(IFunctionGet function);
         alias_fncDynamic generateDynamic();
         alias_fncSemiDynamic generateDirLimit(e_limDirection direction);
-        alias_fncRange generateLimitRange();
+        alias_fncRange generateLimitRange(e_limDirection direction);
         
     }
     
