@@ -18,93 +18,91 @@ namespace lib.function.classes
 {
     using alias_fncStatic = System.Func<DateTime, DateTime>;
     using alias_fncDynamic = System.Func<e_limDirection, DateTime, DateTime, DateTime, DateTime>;
+    using alias_fncDirDynamic = System.Func<DateTime, DateTime, DateTime, DateTime>;
+    using alias_getDate = System.Func<DateTime>;
 
-    public class function : IFunctionGet, IFunctionSet, IFunctionInfo
+    public class Function : IFunctionGet, IFunctionSet
     {
         #region Variables
-        private DateTime _dMinDate;
-        private DateTime _dMaxDate;
-        private e_limDirection _drctn;
-        private bool _exist = false;
-        #region fnc
-        private alias_fncStatic fncStaticCheck;
+        private DateTime _limitMinDate;
+        private DateTime _limitMaxDate;
 
-        private readonly alias_fncStatic fncDummyStaticCheck = (date) => date;
-        #endregion
+        private e_limDirection _direction;
+
+        private alias_getDate _fncMin;
+        private alias_getDate _fncMax;
+        private alias_fncStatic _fncCheck;
+        private alias_fncDirDynamic _fncDirDynamic;
         #endregion
         #region Properties
-        #region readonly
-        public bool exist { get { return _exist; } }
-        #endregion
-        #region main
-        public alias_fncStatic staticCheck
-        {
-            get { return fncStaticCheck; }
-            set
-            {
-                if (value != null)
-                {
-                    fncStaticCheck = value;
-                    _exist = true;
-                }
-                else
-                {
-                    fncStaticCheck = fncDummyStaticCheck;
-                    _exist = false;
-                }
-
-            }
-        }
-        public DateTime minLimit
-        {
-            get { return _dMinDate; }
-            set
-            {
-                if (value != _dMinDate) _dMinDate = value;
-            }
-        }
-        public DateTime maxLimit
-        {
-            get { return _dMaxDate; }
-            set
-            {
-                if (value != _dMaxDate) _dMaxDate = value;
-            }
-        }
         public e_limDirection direction
         {
-            get { return _drctn; }
+            get { return _direction; }
             set
             {
-                if (value != _drctn) _drctn = value;
+                if (_direction != value)
+                {
+                    _direction = value;
+
+                    generateFunction();
+                    setFuncMinMax();
+                }
             }
         }
-        #endregion
+        public DateTime minLimitDate
+        {
+            get { return _limitMinDate; }
+            set
+            {
+                if (_limitMinDate != value) _limitMinDate = value;
+            }
+        }
+        public DateTime maxLimitDate
+        {
+            get { return _limitMaxDate; }
+            set
+            {
+                if (_limitMaxDate != value) _limitMaxDate = value;
+            }
+        }
+        public DateTime minDate { get { return _fncMin(); } }
+        public DateTime maxDate { get { return _fncMax(); } }
         #endregion
         #region Delegates
         #endregion
         #region Constructors
-        public function()
+        public Function()
         {
-            init_Default();
+            _limitMinDate = _limitMaxDate = __hlp.initDate;
+            direction = e_limDirection.Right;
         }
         #endregion
         #region Methods
-        #region Initializers
-        public void init_Default()
-        {
-            fncStaticCheck = fncDummyStaticCheck;
-
-            _dMinDate = _dMaxDate = __hlp.initDate;
-            _drctn = e_limDirection.Fixed;
-        }
-        #endregion
-        public DateTime checkDate(DateTime Date)
-        {
-            return fncStaticCheck(Date);
-        }
         #endregion
         #region Service
+        private void generateFunction()
+        {
+            _fncDirDynamic = functionGenerator.generateDynamicDir(direction);
+        }
+        private void setFuncMinMax()
+        {
+            switch(direction)
+            {
+                case e_limDirection.Right:
+                case e_limDirection.Fixed:
+                    _fncMax = () => minLimitDate;
+                    _fncMin = () => minLimitDate;
+                    break;
+                case e_limDirection.Left:
+                    _fncMax = () => maxLimitDate;
+                    _fncMin = () => maxLimitDate;
+                    break;
+                case e_limDirection.Range:
+                    _fncMax = () => maxLimitDate;
+                    _fncMin = () => minLimitDate;
+                    break;
+            }
+        }
         #endregion
         #region Events
         #endregion
@@ -119,61 +117,47 @@ namespace lib.function.classes
         #region referred interface implementation
         #endregion
         #region self interface implementation
-        #region function
-        public alias_fncStatic getCheckFunction()
-        {
-            return fncStaticCheck;
-        }
-        public void generateStatic()
-        {
-            throw new NotImplementedException();
-        }
-        public bool isExist()
-        {
-            return _exist;
-        }
-        #endregion
-        #region Direction
-        public e_limDirection getDirection()
-        {
-            return direction;
-        }
-        public void setDirection(e_limDirection direction)
-        {
-            this.direction = direction;
-        }
-        #endregion
-        #region limit Dates
-        public DateTime getMaxDate()
-        {
-            return maxLimit;
-        }
-        public void setMaxDate(DateTime Date)
-        {
-            maxLimit = Date;
-        }
-        public DateTime getMinDate()
-        {
-            return minLimit;
-        }
-        public void setMinDate(DateTime Date)
-        {
-            minLimit = Date;
-        }
-        public double getLimitRange()
-        {
-            if (!exist) return -1;
-            if (direction == e_limDirection.Fixed) return 0;
-            else if (direction == e_limDirection.Left) return -1;
-            else if (direction == e_limDirection.Right) return -1;
-            else
-            {
-                double result = maxLimit.Subtract(minLimit).Days;
-                return (result < 0) ? 0 : result;
-            }
-        }
-        #endregion
-        #endregion
+        public DateTime checkDate(DateTime Date)
+        { return _fncCheck(Date); }
+        public alias_fncStatic getFunction()
+        { return _fncCheck; }
 
+
+        public e_limDirection getDirection()
+        { return direction; }
+        public void setDirection(e_limDirection direction)
+        { this.direction = direction; }
+
+
+        public DateTime getMinLimitDate()
+        { return minLimitDate; }
+        public void setMinLimitDate(DateTime Date)
+        { minLimitDate = Date; }
+
+        public DateTime getMaxLimitDate()
+        { return maxLimitDate; }
+        public void setMaxLimitDate(DateTime Date)
+        { maxLimitDate = Date; }
+
+        public void setDate(DateTime Date)
+        {
+            maxLimitDate = minLimitDate = Date;
+        }
+
+
+        public DateTime getMaxDate()
+        { return maxDate; }
+        public DateTime getMinDate()
+        { return minDate; }
+
+        public bool inRange(IFunctionGet functionGet)
+        {
+            return functionComparer.inRange(this, functionGet);
+        }
+        public bool inRange(DateTime Date)
+        {
+            return (Date != checkDate(Date)) ? false : true; 
+        }
+        #endregion
     }
 }

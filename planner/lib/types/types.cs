@@ -18,7 +18,7 @@ namespace lib.types
     #region Dot
     public enum e_dot_type { start = 1, finish =2}
     public enum e_dot_aspect { Dot = 0, LeftDot = 1, RightDot = 2 }
-    public enum e_dot_Limit { None = 0, notEarlier = 4, notLater = 8, inDate = 16 }
+    
     [Flags]
     public enum e_dot_stateLimit { Free = 0, LimitLeft = 1, LimitRight = 2, notEarlier = 4, notLater = 8 }
     [Flags]
@@ -64,6 +64,9 @@ namespace lib.types
         startDate = 1,
         finishDate = 4
     }
+    #endregion
+    #region Dot
+    public enum e_dot_Limit { inDate = 0, notLater = 2, notEarlier = 4 }
     #endregion
     #region Limit
     public enum e_limDirection

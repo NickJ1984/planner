@@ -9,32 +9,30 @@ using lib.function.delegates;
 
 namespace lib.function.iFaces
 {
-    public interface IFunctionInfo
-    {
-        e_limDirection getDirection();
-        bool isExist();
-
-        Func<DateTime, DateTime> getCheckFunction();
-
-        DateTime getMinDate();
-        DateTime getMaxDate();
-        
-        double getLimitRange(); //-1 - бесконечно; 0 - точка
-    }
     public interface IFunctionGet
     {
         e_limDirection getDirection();
 
         DateTime getMinDate();
         DateTime getMaxDate();
+
+        bool inRange(IFunctionGet functionGet);
+        bool inRange(DateTime Date);
+
+        Func<DateTime, DateTime> getFunction();
         DateTime checkDate(DateTime Date);
     }
     public interface IFunctionSet
     {
+        e_limDirection getDirection();
         void setDirection(e_limDirection direction);
-        void setMinDate(DateTime Date);
-        void setMaxDate(DateTime Date);
-        void generateStatic();
+
+        void setMinLimitDate(DateTime Date);
+        DateTime getMinLimitDate();
+
+        void setMaxLimitDate(DateTime Date);
+        DateTime getMaxLimitDate();
+
+        void setDate(DateTime Date);
     }
-    
 }

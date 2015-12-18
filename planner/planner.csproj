@@ -57,9 +57,9 @@
     <Compile Include="lib\dot\archive\iFaces\IDot_Move.cs" />
     <Compile Include="lib\dot\archive\iFaces\IDot_Value.cs" />
     <Compile Include="lib\function\classes\function.cs" />
+    <Compile Include="lib\function\classes\functionComparer.cs" />
     <Compile Include="lib\function\classes\functionGenerator.cs" />
     <Compile Include="lib\function\delegates\delegs.cs" />
-    <Compile Include="lib\function\iFaces\IFunctionCreate.cs" />
     <Compile Include="lib\function\iFaces\IFunction.cs" />
     <Compile Include="lib\graphic\iFaces\IGraphic.cs" />
     <Compile Include="lib\graphic\iFaces\IDay.cs" />
@@ -69,6 +69,8 @@
     <Compile Include="lib\limits\delegates\limit_Delegates.cs" />
     <Compile Include="lib\limits\iFaces\ILimit.cs" />
     <Compile Include="lib\limits\iFaces\IPeriod_localLimit.cs" />
+    <Compile Include="lib\limitV2\classes\Limit.cs" />
+    <Compile Include="lib\limitV2\iFaces\ILimit.cs" />
     <Compile Include="lib\Link\abstracts\ALnk_Base.cs" />
     <Compile Include="lib\Link\classes\dot_DateLinker.cs" />
     <Compile Include="lib\period\abstracts\APeriod_Base.cs" />
