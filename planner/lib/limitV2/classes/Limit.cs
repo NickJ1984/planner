@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using lib.function.iFaces;
-using lib.function.classes;
+using lib.function.temp.iFaces;
+using lib.function.temp.classes;
 using lib.limitV2.iFaces;
 using lib.types;
 
 namespace lib.limitV2.classes
 {
-    public class limit : ILimit, ILimit_data, ILimit_check
+    public class limit //: ILimit, ILimit_data, ILimit_check
     {
         #region Variables
         private Function _func;

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using lib.function.iFaces;
+using lib.function.temp.iFaces;
 using lib.types;
 
-namespace lib.function.classes
+namespace lib.function.temp.classes
 {
     public static class functionComparer
     {

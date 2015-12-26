@@ -98,7 +98,7 @@ namespace lib.dot.archive.classes
         {
             _enabled = true;
             initDate = new DateTime(1900, 1, 1);
-            _limit = e_dot_Limit.None;
+            //_limit = e_dot_Limit.None;
             _dotSet = false;
             _limitMin = _limitMax = _eDate = initDate;
 
@@ -204,7 +204,7 @@ namespace lib.dot.archive.classes
                         );
                     break;*/
 
-                case e_dot_Limit.None:
+                /*case e_dot_Limit.None:
                 default:
                     __setLR(false, false);
                     block = Expression.Block(
@@ -213,7 +213,7 @@ namespace lib.dot.archive.classes
                         Expression.Assign(pResult, pDate),
                         pResult
                         );
-                    break;
+                    break;*/
             }
 
             __limitCMP = null;
@@ -233,7 +233,7 @@ namespace lib.dot.archive.classes
                 case e_dot_Limit.notLater:
                     if (!min) checkEstimated();
                     break;
-                case e_dot_Limit.None:
+                /*case e_dot_Limit.None:
                     checkEstimated();
                     break;
                 /*case e_dot_Limit.Range:
@@ -296,7 +296,7 @@ namespace lib.dot.archive.classes
             _enabled = true;
             _dotSet = false;
             __setLR(false, false);
-            _limit = e_dot_Limit.None;
+            //_limit = e_dot_Limit.None;
             _limitMin = _limitMax = _eDate = initDate;
         }
         public void setDot(IDot_Value Dot)

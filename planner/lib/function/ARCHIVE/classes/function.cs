@@ -8,13 +8,13 @@ using lib.types;
 using lib.service;
 
 using lib.delegates;
-using lib.function.delegates;
+using lib.function.temp.delegates;
 
-using lib.function.iFaces;
+using lib.function.temp.iFaces;
 using lib.limits.iFaces;
 
 
-namespace lib.function.classes
+namespace lib.function.temp.classes
 {
     using alias_fncStatic = System.Func<DateTime, DateTime>;
     using alias_fncDynamic = System.Func<e_limDirection, DateTime, DateTime, DateTime, DateTime>;

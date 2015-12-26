@@ -98,7 +98,7 @@ namespace lib.limits.classes
             initInternal();
         }
         public lim()
-            :this(e_dot_Limit.None , __hlp.initDate)
+            //:this(e_dot_Limit.None , __hlp.initDate)
         { }
 
         private void initExpressionValues()
@@ -185,7 +185,7 @@ namespace lib.limits.classes
 
             BlockExpression block = Expression.Block(
                 new[] { pAllow },
-                (limitType != e_dot_Limit.None) ? cmp : setTrue,
+                //(limitType != e_dot_Limit.None) ? cmp : setTrue,
                 pAllow
                 );
 
@@ -211,9 +211,9 @@ namespace lib.limits.classes
                     Direction = -1;
                     break;
 
-                case e_dot_Limit.None:
+                /*case e_dot_Limit.None:
                     Direction = -2; //направление отсутствует
-                    return nullProcess;
+                    return nullProcess;*/
             }
 
             Expression cmpOperator = Expression.MakeBinary(etSign, pDate, pLimit);
@@ -307,7 +307,7 @@ namespace lib.limits.classes
         }
         public bool isAllowed(ILim limit)
         {
-            if (limit.limitType == e_dot_Limit.None) return false;
+           // if (limit.limitType == e_dot_Limit.None) return false;
 
             return isAllowed(limit.date);
         }

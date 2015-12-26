@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 using lib.types;
-using lib.function.delegates;
+using lib.function.temp.delegates;
 
-namespace lib.function.iFaces
+namespace lib.function.temp.iFaces
 {
     public interface IFunctionGet
     {

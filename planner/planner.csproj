@@ -41,6 +41,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="lib2\classes\fncGenerator.cs" />
+    <Compile Include="lib2\classes\identity.cs" />
+    <Compile Include="lib2\classes\limit.cs" />
+    <Compile Include="lib2\classes\Static.cs" />
+    <Compile Include="lib2\delegates\delegates.cs" />
+    <Compile Include="lib2\delegates\eventArgs.cs" />
+    <Compile Include="lib2\Link\classes\link.cs" />
+    <Compile Include="lib2\Link\classes\linkFactory.cs" />
+    <Compile Include="lib2\Link\classes\relation.cs" />
+    <Compile Include="lib2\Project\classes\Project.cs" />
+    <Compile Include="lib2\Task\classes\Dot.cs" />
+    <Compile Include="lib2\Task\classes\linkAdapter.cs" />
+    <Compile Include="lib2\Task\classes\Task.cs" />
+    <Compile Include="lib2\Task\classes\TaskFactory.cs" />
+    <Compile Include="lib2\types\types.cs" />
     <Compile Include="lib\delegates\eventArgs.cs" />
     <Compile Include="lib\dot\archive\abstracts\ABase.cs" />
     <Compile Include="lib\dot\archive\abstracts\ADot_Fixer.cs" />
@@ -56,11 +71,11 @@
     <Compile Include="lib\dot\iFaces\IDot.cs" />
     <Compile Include="lib\dot\archive\iFaces\IDot_Move.cs" />
     <Compile Include="lib\dot\archive\iFaces\IDot_Value.cs" />
-    <Compile Include="lib\function\classes\function.cs" />
-    <Compile Include="lib\function\classes\functionComparer.cs" />
-    <Compile Include="lib\function\classes\functionGenerator.cs" />
-    <Compile Include="lib\function\delegates\delegs.cs" />
-    <Compile Include="lib\function\iFaces\IFunction.cs" />
+    <Compile Include="lib\function\ARCHIVE\classes\function.cs" />
+    <Compile Include="lib\function\ARCHIVE\classes\functionComparer.cs" />
+    <Compile Include="lib\function\ARCHIVE\classes\functionGenerator.cs" />
+    <Compile Include="lib\function\ARCHIVE\delegates\delegs.cs" />
+    <Compile Include="lib\function\ARCHIVE\iFaces\IFunction.cs" />
     <Compile Include="lib\graphic\iFaces\IGraphic.cs" />
     <Compile Include="lib\graphic\iFaces\IDay.cs" />
     <Compile Include="lib\interfaces\IIdentify.cs" />
