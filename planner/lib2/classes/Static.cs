@@ -22,6 +22,5 @@ namespace lib2.classes
             eLnkTypeChunk TC = (eLnkTypeChunk)Type;
             return ((TC & eLnkTypeChunk._Finish) == eLnkTypeChunk._Finish) ? eLnkDot.Finish : eLnkDot.Start;
         }
-
     }
 }

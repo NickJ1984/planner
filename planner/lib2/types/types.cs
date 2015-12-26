@@ -29,6 +29,9 @@ namespace lib2.types
     #endregion
 
     #region Links
+    [Flags]
+    public enum eLnkFlwChanges { date = 2, relation = 4}
+
     public enum eLnkState { inTime = 0, later = 1, early = 2 }
 
     public enum eLnkDot
