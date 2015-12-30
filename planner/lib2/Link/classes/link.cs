@@ -117,6 +117,14 @@ namespace lib2.Link.classes
         private identity _ID;
         private ITask _precursor;
         private ITask _follower;
+        #region ITask -> identity Patch
+        //init __idPrecursor, __idFollower in constructor
+        //rename properties to _precursor & _follower to work
+        private readonly string __idPrecursor;
+        private readonly string __idFollower;
+        private ITask prp_precursor { get { return _project.getTaskFactory().getTask(__idPrecursor); } }
+        private ITask prp_follower { get { return _project.getTaskFactory().getTask(__idFollower); } }
+        #endregion
 
         private eLnkState _state;
         private eLnkType _type;
@@ -203,6 +211,14 @@ namespace lib2.Link.classes
             if (ctrlDate == e.newValue) _state = eLnkState.inTime;
             else if(e.newValue > ctrlDate) _state = eLnkState.later;
             else if (e.newValue < ctrlDate) _state = eLnkState.early;
+        }
+        #endregion
+        #region service
+        private bool isCompatible(ITask precursor, ITask follower)
+        {
+            throw new NotImplementedException();
+            //if false throw exc_link_LoopException 
+            //lib2.exceptions
         }
         #endregion
         #region Interface secondary methods
@@ -450,7 +466,6 @@ namespace lib2.Link.classes
             #endregion
             #endregion
         }
-
         #endregion
         #region static
         public static eFLim lnk2lim(eLnkType type)

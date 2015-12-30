@@ -16,6 +16,12 @@ namespace lib2.Task.classes
         bool connectAsPrecursor(ILink Link);
         bool connectAsFollower(ILink Link);
         bool unregisterLink(identity idLink);
+
+        bool findPrecursor(identity idTask);
+        bool findFollower(identity idTask);
+
+        identity[] getPrecursors();
+        identity[] getFollowers();
     }
 
     public class linkAdapter 
@@ -24,6 +30,8 @@ namespace lib2.Task.classes
 
 
         #endregion
+        #region inner entities
 
+        #endregion
     }
 }

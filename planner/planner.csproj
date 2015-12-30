@@ -47,6 +47,7 @@
     <Compile Include="lib2\classes\Static.cs" />
     <Compile Include="lib2\delegates\delegates.cs" />
     <Compile Include="lib2\delegates\eventArgs.cs" />
+    <Compile Include="lib2\Exceptions\plannerExceptions.cs" />
     <Compile Include="lib2\Link\classes\link.cs" />
     <Compile Include="lib2\Link\classes\linkFactory.cs" />
     <Compile Include="lib2\Link\classes\relation.cs" />

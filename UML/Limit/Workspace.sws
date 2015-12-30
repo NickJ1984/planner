@@ -4,9 +4,9 @@
 
 <Workspace>
 	<Local Expanded="Yes">
-		<Model Expanded="Yes" ID="{6F247EF9-48F6-4FE2-A3EA-EE217A1D0F9F}" Loaded="No" Name="limit" Type="{18112060-1A4B-11D1-83D9-444553540000}" URL="limit.oom"/>
+		<Model Expanded="Yes" ID="{6F247EF9-48F6-4FE2-A3EA-EE217A1D0F9F}" Name="limit" Type="{18112060-1A4B-11D1-83D9-444553540000}" URL="limit.oom"/>
 		<Model ID="{9AD90E24-215E-44D7-B739-83F1FC2D8B42}" Loaded="No" Name="Conceptual Data_1" Type="{1E597170-9350-11D1-AB3C-0020AF71E433}" URL="Conceptual Data_1.cdm"/>
-		<Model Expanded="Yes" ID="{A1B3ADE8-393B-4457-85C2-6F882228B43E}" Name="Task" Type="{18112060-1A4B-11D1-83D9-444553540000}" URL="Task.oom"/>
+		<Model Expanded="Yes" ID="{A1B3ADE8-393B-4457-85C2-6F882228B43E}" Name="Task" Selected="Yes" Type="{18112060-1A4B-11D1-83D9-444553540000}" URL="Task.oom"/>
 	</Local>
 	<BrowserModule Name="Repository"/>
 </Workspace>
